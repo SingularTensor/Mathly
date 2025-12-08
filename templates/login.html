@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <title>{{ mode }}</title>
+</head>
+<body>
+    <main>
+        <h2>{{ mode }}</h2>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <p style="color: red; background: #ffdddd; padding: 10px;">{{ messages[0] }}</p>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label>Username</label>
+            <input type="text" name="username" required>
+            
+            <label>Password</label>
+            <input type="password" name="password" required>
+            
+            <button type="submit">{{ mode }}</button>
+        </form>
+
+        <hr>
+        {% if mode == 'Login' %}
+            <p>New? <a href="/register">Create Account</a></p>
+        {% else %}
+            <p>Returning? <a href="/login">Login Here</a></p>
+        {% endif %}
+    </main>
+</body>
+</html>
