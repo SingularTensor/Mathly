@@ -20,16 +20,24 @@ def load_user(user_id):
 
 # --- ROUTES ---
 @app.route('/', methods=['GET', 'POST'])
-@login_required # <--- THE GATEKEEPER
+@login_required
 def home():
     if request.method == 'POST':
         raw_text = request.form.get('user_input')
-        # We now attach the card to the CURRENT USER
+        
+        # 1. Create the Card
         new_card = Card(text=raw_text, user_id=current_user.id)
+        
+        # 2. Award the XP (The Dopamine Hit)
+        current_user.xp += 10 
+        
+        # 3. Save Both
         db.session.add(new_card)
         db.session.commit()
+        
+        # Optional: Add a flash message for feedback
+        # flash(f"Card added! You gained 10 XP.")
 
-    # Only show cards belonging to THIS user
     my_cards = Card.query.filter_by(user_id=current_user.id).all()
     return render_template('index.html', cards=my_cards, user=current_user)
 
