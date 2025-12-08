@@ -1,0 +1,17 @@
+# Python bytecode (Junk)
+__pycache__/
+*.pyc
+
+# Virtual Environment (The Engine - Do not upload)
+.venv/
+venv/
+env/
+
+# Database (Your User Data - Do not upload)
+instance/
+*.db
+*.sqlite3
+
+# IDE Settings (Your window layout)
+.idea/
+.vscode/
