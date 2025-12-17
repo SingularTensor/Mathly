@@ -2,7 +2,7 @@ from flask import Flask
 from database import db
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///game.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///game.db' 
 app.config['SECRET_KEY'] = 'dev-key-12345'
 
 db.init_app(app)
