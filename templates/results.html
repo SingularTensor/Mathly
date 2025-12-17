@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+<body>
+    <main>
+        <h1>{% if is_correct %}✓ Correct!{% else %}✗ Wrong!{% endif %}</h1>
+        
+        <p><strong>You selected:</strong> {{ selected }}</p>
+        <p><strong>Correct answer:</strong> {{ correct }}</p>
+        
+        <a href="/">Back to quizzes</a>
+    </main>
+</body>
+</html>

@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mathly Core</title>
+    <title>Quiz Game</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
     <header>
-        <h1>Flashcard Database</h1>
-        <p>Status: Online</p>
+        <h1>Quiz Game</h1>
     </header>
-
+    
     <main>
-        {% if cards %}
-            <div style="display: grid; gap: 10px;">
-                {% for card in cards %}
-                    <article>
-                        <strong>#{{ card.id }}</strong>
-                        <p>{{ card.text }}</p>
-                    </article>
-                {% endfor %}
-            </div>
+        {% if quizzes %}
+            <ul>
+            {% for quiz in quizzes %}
+                <li><a href="/quiz/{{ quiz.id }}">{{ quiz.title }} ({{ quiz.difficulty }})</a></li>
+            {% endfor %}
+            </ul>
         {% else %}
-            <div style="text-align: center; padding: 50px;">
-                <h3>The Void</h3>
-                <p>No data found.</p>
-                <p><em>"Whatever in creation exists without my knowledge exists without my consent."</em></p>
-            </div>
+            <p>No quizzes available.</p>
         {% endif %}
     </main>
 </body>

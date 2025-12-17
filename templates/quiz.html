@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ quiz.title }}</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+<body>
+    <header>
+        <h1>{{ quiz.title }}</h1>
+        <p>Difficulty: <strong>{{ quiz.difficulty }}</strong></p>
+    </header>
+    
+    <main>
+        <h2>{{ quiz.question }}</h2>
+        
+        <form action="/submit" method="POST">
+            <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
+            
+            {% for option in quiz.options %}
+                <button type="submit" name="option_id" value="{{ option.id }}">
+                    {{ option.text }}
+                </button>
+            {% endfor %}
+        </form>
+    </main>
+</body>
+</html>
