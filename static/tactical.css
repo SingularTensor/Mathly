@@ -948,19 +948,27 @@ body {
 
 /* === RESPONSIVE - PHONE === */
 @media (max-width: 768px) {
-    body { overflow: auto; }
+    body {
+        overflow: auto;
+        overflow-x: hidden;
+        min-height: 100vh;
+        height: auto;
+    }
 
     .hud-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto 1fr auto;
+        display: flex;
+        flex-direction: column;
         gap: 15px;
-        padding: 12px;
+        padding: 15px;
+        min-height: auto;
+        padding-bottom: 30px;
     }
 
     .top-bar {
         flex-direction: column;
-        gap: 15px;
-        padding: 18px;
+        gap: 18px;
+        padding: 20px;
+        order: 1;
     }
 
     .logo-section {
@@ -999,76 +1007,88 @@ body {
     }
 
     .left-panel {
-        order: 2;
+        order: 3;
+        display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 15px;
     }
 
     .left-panel .panel {
         width: 100%;
-        padding: 18px;
+        padding: 20px;
     }
 
     .left-panel .panel:first-child { display: none; }
 
     .panel-title { font-size: 15px; }
 
-    .nav-list { display: flex; flex-direction: column; gap: 10px; }
+    .nav-list { display: flex; flex-direction: column; gap: 12px; }
     .nav-item {
         width: 100%;
-        padding: 18px 20px;
+        padding: 20px 22px;
         justify-content: space-between;
-        min-height: 58px;
-        font-size: 16px;
+        min-height: 60px;
+        font-size: 17px;
     }
-    .nav-item .arrow { display: block; font-size: 16px; }
+    .nav-item .arrow { display: block; font-size: 18px; }
 
     .center-panel {
-        order: 1;
-        grid-template-columns: 1fr;
-        gap: 12px;
+        order: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
 
     .center-header {
         flex-direction: column;
         gap: 8px;
         text-align: center;
-        padding: 16px;
+        padding: 18px;
     }
 
-    .center-title { font-size: 16px; }
+    .center-title { font-size: 17px; }
     .center-ref { font-size: 11px; }
 
-    .data-panel { padding: 18px; }
-    .data-panel::before { font-size: 10px; }
-    .metrics-row { gap: 20px; }
-    .metric-value { font-size: 24px; }
-    .metric-label { font-size: 11px; }
-    .mini-chart { height: 35px; }
+    .data-panel { padding: 20px; }
+    .data-panel::before { font-size: 10px; top: -9px; }
+    .data-panel.span-full { width: 100%; }
 
-    .coord-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .coord-item { padding: 12px 8px; }
-    .coord-value { font-size: 18px; }
-    .coord-label { font-size: 10px; }
+    .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    .metric-item { min-width: auto; }
+    .metric-value { font-size: 26px; }
+    .metric-label { font-size: 11px; margin-top: 4px; }
+    .mini-chart { height: 40px; margin-top: 12px; }
+
+    .coord-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .coord-item { padding: 14px 10px; }
+    .coord-value { font-size: 20px; }
+    .coord-label { font-size: 10px; margin-top: 4px; }
 
     .action-corner {
         flex-direction: column;
-        gap: 12px;
-        padding: 15px 0;
+        gap: 15px;
+        padding: 20px 0;
     }
-    .action-corner-label { font-size: 12px; }
+    .action-corner-label { font-size: 13px; text-align: center; }
     .corner-btn {
         width: 100%;
         text-align: center;
-        min-height: 56px;
+        min-height: 58px;
         padding: 18px 24px;
-        font-size: 14px;
+        font-size: 15px;
     }
 
+    .right-panel { display: none; }
+
     .bottom-bar {
+        order: 4;
         flex-direction: column;
         gap: 8px;
-        padding: 12px 15px;
+        padding: 15px;
         font-size: 11px;
     }
 
@@ -1080,15 +1100,17 @@ body {
 
 /* === RESPONSIVE - SMALL PHONE === */
 @media (max-width: 380px) {
-    .hud-container { padding: 8px; gap: 12px; }
-    .top-bar { padding: 15px; }
-    .top-stats { gap: 25px; }
+    .hud-container { padding: 10px; gap: 12px; }
+    .top-bar { padding: 15px; gap: 15px; }
+    .top-stats { gap: 30px; }
     .stat-value { font-size: 20px; }
     .logo-text { font-size: 24px; }
     .logo-icon { width: 45px; height: 45px; }
-    .action-btn { padding: 14px 20px; font-size: 13px; }
-    .nav-item { padding: 16px 18px; min-height: 54px; font-size: 15px; }
-    .metric-item { min-width: 80px; }
-    .metric-value { font-size: 22px; }
-    .corner-btn { min-height: 52px; padding: 16px 20px; font-size: 13px; }
+    .action-btn { padding: 14px 20px; font-size: 13px; min-height: 50px; }
+    .nav-item { padding: 18px; min-height: 56px; font-size: 16px; }
+    .metric-value { font-size: 24px; }
+    .corner-btn { min-height: 54px; padding: 16px 20px; font-size: 14px; }
+    .data-panel { padding: 18px; }
+    .center-header { padding: 15px; }
+    .center-title { font-size: 15px; }
 }
