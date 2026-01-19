@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MATHLY // SECTORS</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -417,6 +419,64 @@
         }
         .sector-card.upgraded {
             animation: upgradeFlash 0.5s ease-out;
+        }
+
+        /* Tablet */
+        @media (max-width: 1024px) {
+            .corner-data { display: none; }
+            .geo-ring { display: none; }
+            .main { padding: 25px 20px; }
+            .sectors-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .header { padding: 15px 20px; }
+            .header-stats { gap: 20px; }
+            .stat-value { font-size: 18px; }
+            .page-title { font-size: 24px; }
+        }
+
+        /* Phone */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .logo-group { width: 100%; justify-content: center; }
+            .logo-tag { display: none; }
+            .header-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .nav-links { gap: 5px; }
+            .nav-link { padding: 6px 12px; font-size: 11px; }
+            .main { padding: 20px 15px; padding-bottom: 50px; }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 25px;
+            }
+            .page-meta { text-align: left; }
+            .page-title { font-size: 22px; }
+            .sectors-grid { grid-template-columns: 1fr; gap: 15px; }
+            .sector-card { padding: 20px; }
+            .sector-header { margin-bottom: 15px; }
+            .sector-icon { width: 40px; height: 40px; font-size: 20px; }
+            .sector-info h3 { font-size: 16px; }
+            .sector-stats { gap: 8px; padding: 12px; }
+            .sector-stat-value { font-size: 13px; }
+            .sector-actions { flex-direction: column; gap: 8px; }
+            .sector-btn { padding: 14px; min-height: 48px; }
+            .level-value { font-size: 20px; }
+            .level-arrow { width: 28px; height: 28px; }
+            .data-strip { font-size: 9px; gap: 15px; height: 35px; }
+            .coming-soon-badge { font-size: 10px; padding: 6px 15px; }
+        }
+
+        /* Small phones */
+        @media (max-width: 380px) {
+            .header-stats .stat { display: none; }
+            .header-stats .stat:last-of-type { display: block; }
+            .sector-stats { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>

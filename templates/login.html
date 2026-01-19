@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MATHLY // {{ mode|upper }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -240,6 +242,58 @@
             z-index: 100;
         }
         .data-strip span { color: var(--text-dim); }
+
+        /* Tablet */
+        @media (max-width: 1024px) {
+            .corner-data { display: none; }
+            .geo-ring { display: none; }
+        }
+
+        /* Phone */
+        @media (max-width: 768px) {
+            .main {
+                padding: 20px 15px;
+                padding-bottom: 50px;
+            }
+            .login-card {
+                padding: 30px 20px;
+                max-width: 100%;
+            }
+            .card-header {
+                flex-direction: column;
+                gap: 15px;
+                margin-bottom: 25px;
+            }
+            .logo { font-size: 28px; }
+            .mode-tabs { width: 100%; }
+            .mode-tab { flex: 1; padding: 10px; }
+            .form-group { margin-bottom: 18px; }
+            .form-input {
+                padding: 14px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            .submit-btn {
+                padding: 16px;
+                min-height: 52px;
+                font-size: 13px;
+            }
+            .alt-action {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            .data-strip {
+                font-size: 9px;
+                gap: 15px;
+                height: 35px;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 380px) {
+            .login-card { padding: 25px 15px; }
+            .logo { font-size: 24px; }
+        }
     </style>
 </head>
 <body>

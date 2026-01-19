@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MATHLY // SOLVE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -433,6 +435,87 @@
             z-index: 100;
         }
         .data-strip span { color: var(--text-dim); }
+
+        /* Tablet */
+        @media (max-width: 1024px) {
+            .corner-data { display: none; }
+            .geo-ring { display: none; }
+            .main { padding: 30px 20px; }
+            .problem-card { padding: 30px; max-width: 100%; }
+        }
+
+        /* Phone */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px 15px;
+            }
+            .logo-group { width: 100%; justify-content: center; }
+            .logo-tag { display: none; }
+            .header-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .nav-links { gap: 5px; }
+            .nav-link { padding: 6px 10px; font-size: 10px; }
+            .stat-value { font-size: 16px; }
+            .main {
+                padding: 20px 15px;
+                padding-bottom: 50px;
+                min-height: calc(100vh - 90px);
+            }
+            .problem-card {
+                padding: 20px;
+                max-width: 100%;
+            }
+            .card-header {
+                flex-direction: column;
+                gap: 15px;
+                margin-bottom: 25px;
+            }
+            .level-badge { text-align: left; }
+            .level-badge-value { font-size: 24px; }
+            .question-text { font-size: 32px; }
+            .equals { font-size: 28px; }
+            .answer-slot {
+                width: 90px;
+                height: 60px;
+                font-size: 28px;
+            }
+            .question-display { gap: 15px; }
+            .options-grid { gap: 10px; }
+            .option-card {
+                width: 70px;
+                height: 70px;
+                font-size: 22px;
+                min-width: 70px;
+            }
+            .submit-btn {
+                width: 100%;
+                padding: 16px;
+                min-height: 52px;
+            }
+            .result-overlay { padding: 15px; }
+            .result-card { padding: 30px 25px; width: 100%; }
+            .result-status { font-size: 26px; }
+            .result-exp { font-size: 20px; }
+            .result-buttons { flex-direction: column; gap: 10px; }
+            .result-btn {
+                padding: 14px 25px;
+                min-height: 48px;
+                width: 100%;
+                text-align: center;
+            }
+            .data-strip { font-size: 9px; gap: 15px; height: 35px; }
+        }
+
+        /* Small phones */
+        @media (max-width: 380px) {
+            .question-text { font-size: 26px; }
+            .option-card { width: 60px; height: 60px; font-size: 20px; }
+            .answer-slot { width: 70px; height: 50px; font-size: 24px; }
+        }
     </style>
 </head>
 <body>

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MATHLY // SKILL MATRIX</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -335,13 +337,66 @@
         }
         .data-strip span { color: var(--text-dim); }
 
-        @media (max-width: 1000px) {
+        /* Tablet */
+        @media (max-width: 1024px) {
+            .corner-data { display: none; }
+            .geo-ring { display: none; }
+            .overview-grid { grid-template-columns: repeat(2, 1fr); }
+            .skills-grid { grid-template-columns: 1fr; }
+            .main { padding: 25px 20px; }
+            .header { padding: 15px 20px; }
+        }
+
+        /* Phone */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .logo-group { width: 100%; justify-content: center; }
+            .logo-tag { display: none; }
+            .header-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .nav-links { gap: 5px; }
+            .nav-link { padding: 6px 12px; font-size: 11px; }
+            .stat-value { font-size: 18px; }
+            .main { padding: 20px 15px; padding-bottom: 50px; }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 25px;
+            }
+            .page-meta { text-align: left; }
+            .page-title { font-size: 22px; }
             .overview-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 25px;
             }
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
+            .overview-card { padding: 15px; }
+            .overview-value { font-size: 28px; }
+            .overview-label { font-size: 11px; }
+            .skills-grid { grid-template-columns: 1fr; gap: 15px; }
+            .skill-card { padding: 20px; }
+            .skill-header { margin-bottom: 15px; }
+            .skill-icon { width: 40px; height: 40px; font-size: 20px; margin-right: 12px; }
+            .skill-name { font-size: 16px; }
+            .skill-level-value { font-size: 26px; }
+            .skill-stats { gap: 10px; }
+            .skill-stat { padding: 10px 6px; }
+            .skill-stat-value { font-size: 16px; }
+            .data-strip { font-size: 9px; gap: 15px; height: 35px; }
+        }
+
+        /* Small phones */
+        @media (max-width: 380px) {
+            .overview-grid { grid-template-columns: 1fr 1fr; }
+            .overview-value { font-size: 24px; }
+            .skill-stats { grid-template-columns: 1fr; }
         }
     </style>
 </head>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}MATHLY // TACTICAL TRAINING SYSTEM{% endblock %}</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tactical.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- BACKGROUND & DECORATIONS -->
+    <div class="bg-layer bg-grid"></div>
+    <div class="bg-layer scan-line"></div>
+    <div class="bg-layer scan-line"></div>
+
+    <div class="radar-sweep">
+        <div class="radar-rings">
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <div class="bg-layer hex-grid">
+        {% for i in range(12) %}
+        <div class="hex-cell" style="top:{{ (i // 4) * 36 }}px; left:{{ (i % 4) * 32 + ((i // 4) % 2) * 16 }}px;"></div>
+        {% endfor %}
+    </div>
+
+    <div class="data-stream left">0x4F8A... SECURE... HANDSHAKE... 10101...</div>
+    <div class="data-stream right">...ENCRYPT... LINK_EST... 0x99B...</div>
+
+    <div class="corner-marker tl"></div>
+    <div class="corner-marker tr"></div>
+    <div class="corner-marker bl"></div>
+    <div class="corner-marker br"></div>
+
+    <div class="edge-data top-left">
+        <span>SYS.V.2.4.1</span>
+        <span class="highlight">SECURE</span>
+    </div>
+    <div class="edge-data top-right">
+        <span>NET: STABLE</span>
+        <span>PING: 8ms</span>
+    </div>
+    <div class="edge-data bottom-left">
+        <span>MATH.SYS</span>
+        <span>// READY</span>
+    </div>
+    <div class="edge-data bottom-right">
+        <span>AUTH.MOD</span>
+        <span>ACTIVE</span>
+    </div>
+
+    <!-- MAIN HUD -->
+    <div class="hud-container">
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <!-- Placeholder or simple CSS logo -->
+                    <div style="font-weight:900; color:var(--text); font-family:var(--sans-font);">M</div>
+                </div>
+                <div>
+                    <div class="logo-text">MATHLY</div>
+                    <div class="system-tag">TACTICAL TRAINING SYSTEM v2.4.1</div>
+                </div>
+            </div>
+
+            <div class="top-stats">
+                <div class="stat-block">
+                    <div class="stat-label">System Status</div>
+                    <div class="stat-value highlight">ONLINE</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-label">Active Modules</div>
+                    <div class="stat-value">4</div>
+                </div>
+            </div>
+
+            <div class="user-section">
+                {% if current_user.is_authenticated %}
+                <div class="user-info">
+                    <div class="user-name">{{ current_user.username }}</div>
+                    <div class="user-exp">EXP: {{ current_user.exp }} // LVL: {{ current_user.level }}</div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="action-btn">ABORT_SESSION</a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="action-btn">INIT_SESSION</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- LEFT PANEL (NAVIGATION) -->
+        <aside class="left-panel">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">SYSTEM STATUS</div>
+                    <div class="panel-status">LIVE</div>
+                </div>
+                <ul class="status-list">
+                    <li class="status-item">
+                        <span class="label">Core System</span>
+                        <span class="value online">ONLINE</span>
+                    </li>
+                    <li class="status-item">
+                        <span class="label">Database</span>
+                        <span class="value online">CONNECTED</span>
+                    </li>
+                    <li class="status-item">
+                        <span class="label">Auth Module</span>
+                        {% if current_user.is_authenticated %}
+                        <span class="value online">ACTIVE</span>
+                        {% else %}
+                        <span class="value">STANDBY</span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+
+            <nav class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">NAVIGATION</div>
+                </div>
+                <div class="nav-list">
+                    <a href="{{ url_for('home') }}"
+                        class="nav-item {% if request.endpoint == 'home' %}primary{% endif %}">
+                        <span>ACCESS SYSTEM</span>
+                        <span class="arrow">></span>
+                    </a>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('play') }}"
+                        class="nav-item {% if request.endpoint == 'play' %}primary{% endif %}">
+                        <span>TRAINING SIM</span>
+                        <span class="arrow">></span>
+                    </a>
+                    <a href="{{ url_for('skills') }}"
+                        class="nav-item {% if request.endpoint == 'skills' %}primary{% endif %}">
+                        <span>SKILL TREE</span>
+                        <span class="arrow">></span>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('register') }}" class="nav-item">
+                        <span>NEW OPERATIVE</span>
+                        <span class="arrow">></span>
+                    </a>
+                    {% endif %}
+                </div>
+            </nav>
+        </aside>
+
+        <!-- CENTER CONTENT (Injected by pages) -->
+        <main class="center-panel">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- RIGHT PANEL (Telemetry) -->
+        <aside class="right-panel">
+            {% block right_panel %}
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">TELEMETRY</div>
+                    <div class="panel-status">LIVE</div>
+                </div>
+                <div class="telemetry-grid">
+                    <div class="telemetry-item">
+                        <div class="telemetry-value">64K</div>
+                        <div class="telemetry-label">MEMORY</div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="telemetry-value">12%</div>
+                        <div class="telemetry-label">CPU</div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="telemetry-value">8ms</div>
+                        <div class="telemetry-label">LATENCY</div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="telemetry-value">60</div>
+                        <div class="telemetry-label">FPS</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">NOTICES</div>
+                </div>
+                <ul class="sector-list">
+                    <li class="sector-item">
+                        <span class="sector-name">Contracts</span>
+                        <span class="sector-status">COMING</span>
+                    </li>
+                    <li class="sector-item">
+                        <span class="sector-name">Leaderboard</span>
+                        <span class="sector-status">COMING</span>
+                    </li>
+                </ul>
+            </div>
+            {% endblock %}
+        </aside>
+
+        <!-- BOTTOM BAR -->
+        <footer class="bottom-bar">
+            <div class="bottom-left">
+                <span>Ref: 0xF9AA</span>
+                <span>Mode: ALPHA-7</span>
+            </div>
+            <div class="bottom-center">
+                MATHLY SYSTEM // TACTICAL INTERFACE // v2.4.1
+            </div>
+            <div class="bottom-right">
+                <span>SEC: <span class="hl">ENCRYPTED</span></span>
+            </div>
+        </footer>
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
