@@ -953,14 +953,14 @@ body {
     .hud-container {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto 1fr auto;
-        gap: 12px;
-        padding: 10px;
+        gap: 15px;
+        padding: 12px;
     }
 
     .top-bar {
         flex-direction: column;
-        gap: 12px;
-        padding: 12px 15px;
+        gap: 15px;
+        padding: 18px;
     }
 
     .logo-section {
@@ -968,93 +968,108 @@ body {
         justify-content: center;
     }
 
-    .logo-icon { width: 40px; height: 40px; }
-    .logo-text { font-size: 22px; letter-spacing: 2px; }
+    .logo-icon { width: 50px; height: 50px; }
+    .logo-text { font-size: 28px; letter-spacing: 3px; }
     .system-tag { display: none; }
 
     .top-stats {
         width: 100%;
         justify-content: center;
-        gap: 30px;
+        gap: 40px;
     }
 
     .stat-block { text-align: center; }
-    .stat-value { font-size: 18px; }
+    .stat-label { font-size: 12px; }
+    .stat-value { font-size: 22px; }
 
     .user-section {
         width: 100%;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 15px;
     }
 
     .user-info { text-align: center; }
+    .user-name { font-size: 18px; }
+    .user-exp { font-size: 14px; }
     .action-btn {
-        padding: 10px 20px;
-        min-height: 44px;
+        padding: 16px 28px;
+        min-height: 52px;
+        font-size: 14px;
     }
 
     .left-panel {
         order: 2;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 10px;
+        flex-direction: column;
+        gap: 12px;
     }
 
     .left-panel .panel {
-        flex: 1;
-        min-width: 150px;
+        width: 100%;
+        padding: 18px;
     }
 
     .left-panel .panel:first-child { display: none; }
 
-    .nav-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .panel-title { font-size: 15px; }
+
+    .nav-list { display: flex; flex-direction: column; gap: 10px; }
     .nav-item {
-        flex: 1;
-        min-width: 120px;
-        padding: 12px;
-        justify-content: center;
-        min-height: 48px;
+        width: 100%;
+        padding: 18px 20px;
+        justify-content: space-between;
+        min-height: 58px;
+        font-size: 16px;
     }
-    .nav-item .arrow { display: none; }
+    .nav-item .arrow { display: block; font-size: 16px; }
 
     .center-panel {
         order: 1;
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 12px;
     }
 
     .center-header {
         flex-direction: column;
-        gap: 5px;
+        gap: 8px;
         text-align: center;
+        padding: 16px;
     }
 
-    .center-title { font-size: 13px; }
+    .center-title { font-size: 16px; }
+    .center-ref { font-size: 11px; }
 
-    .data-panel { padding: 12px; }
-    .metrics-row { gap: 15px; }
-    .metric-value { font-size: 18px; }
-    .mini-chart { height: 30px; }
+    .data-panel { padding: 18px; }
+    .data-panel::before { font-size: 10px; }
+    .metrics-row { gap: 20px; }
+    .metric-value { font-size: 24px; }
+    .metric-label { font-size: 11px; }
+    .mini-chart { height: 35px; }
 
-    .coord-grid { grid-template-columns: repeat(2, 1fr); }
+    .coord-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .coord-item { padding: 12px 8px; }
+    .coord-value { font-size: 18px; }
+    .coord-label { font-size: 10px; }
 
     .action-corner {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
+        padding: 15px 0;
     }
+    .action-corner-label { font-size: 12px; }
     .corner-btn {
         width: 100%;
         text-align: center;
-        min-height: 48px;
-        padding: 14px 20px;
+        min-height: 56px;
+        padding: 18px 24px;
+        font-size: 14px;
     }
 
     .bottom-bar {
         flex-direction: column;
         gap: 8px;
-        padding: 10px 15px;
-        font-size: 10px;
+        padding: 12px 15px;
+        font-size: 11px;
     }
 
     .bottom-left,
@@ -1065,12 +1080,15 @@ body {
 
 /* === RESPONSIVE - SMALL PHONE === */
 @media (max-width: 380px) {
-    .hud-container { padding: 8px; }
-    .top-bar { padding: 10px; }
-    .top-stats { gap: 20px; }
-    .stat-value { font-size: 16px; }
-    .logo-text { font-size: 20px; }
-    .left-panel .panel { min-width: 100%; }
-    .nav-item { min-width: 100%; }
-    .metric-item { min-width: 70px; }
+    .hud-container { padding: 8px; gap: 12px; }
+    .top-bar { padding: 15px; }
+    .top-stats { gap: 25px; }
+    .stat-value { font-size: 20px; }
+    .logo-text { font-size: 24px; }
+    .logo-icon { width: 45px; height: 45px; }
+    .action-btn { padding: 14px 20px; font-size: 13px; }
+    .nav-item { padding: 16px 18px; min-height: 54px; font-size: 15px; }
+    .metric-item { min-width: 80px; }
+    .metric-value { font-size: 22px; }
+    .corner-btn { min-height: 52px; padding: 16px 20px; font-size: 13px; }
 }
