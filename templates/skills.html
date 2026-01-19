@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MATHLY // SKILL MATRIX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #08080a;
+            --bg-panel: rgba(12, 12, 14, 0.95);
+            --bg-elevated: rgba(20, 20, 22, 0.9);
+            --text: #d1dce5;
+            --text-dim: #6b7280;
+            --text-muted: #4a4f57;
+            --accent: #1a3d34;
+            --accent-light: #2a5d4a;
+            --border: #1c1c1e;
+            --border-light: #2a2a2e;
+            --success: #2d5a47;
+            --error: #5a2d2d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .geo-ring {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px; height: 800px;
+            border: 1px solid rgba(26, 61, 52, 0.15);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: slowRotate 200s linear infinite;
+        }
+        .geo-ring:nth-child(2) { width: 600px; height: 600px; animation-duration: 180s; animation-direction: reverse; }
+        .geo-ring:nth-child(3) { width: 1000px; height: 1000px; animation-duration: 240s; border-style: dashed; }
+
+        @keyframes slowRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .corner-data {
+            position: fixed;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 100;
+            line-height: 1.6;
+        }
+        .corner-data.tl { top: 15px; left: 15px; }
+        .corner-data.tr { top: 15px; right: 15px; text-align: right; }
+        .corner-data.bl { bottom: 15px; left: 15px; }
+        .corner-data.br { bottom: 15px; right: 15px; text-align: right; }
+        .corner-data span { color: var(--accent-light); }
+
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 50;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text);
+        }
+
+        .logo-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .stat {
+            text-align: right;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        .stat-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+        .nav-link {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--text);
+            border-color: var(--accent);
+            background: rgba(26, 61, 52, 0.1);
+        }
+
+        .main {
+            padding: 40px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .page-title strong {
+            font-weight: 600;
+            color: var(--accent-light);
+        }
+
+        .page-meta {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .overview-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 20px;
+            position: relative;
+        }
+
+        .overview-card::before {
+            content: attr(data-label);
+            position: absolute;
+            top: -8px;
+            left: 12px;
+            background: var(--bg);
+            padding: 0 6px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .overview-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 36px;
+            font-weight: 500;
+            color: var(--accent-light);
+            margin-bottom: 4px;
+        }
+
+        .overview-label {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .skill-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 25px;
+            position: relative;
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .skill-icon {
+            width: 50px; height: 50px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--text-dim);
+            background: var(--bg);
+            margin-right: 15px;
+        }
+
+        .skill-title-group {
+            flex: 1;
+        }
+
+        .skill-name {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .skill-ref {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .skill-level {
+            text-align: right;
+        }
+        .skill-level-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .skill-level-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .skill-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .skill-stat {
+            text-align: center;
+            padding: 12px 8px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+
+        .skill-stat-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 20px;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .skill-stat-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-strip {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 30px;
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            gap: 30px;
+            z-index: 100;
+        }
+        .data-strip span { color: var(--text-dim); }
+
+        @media (max-width: 1000px) {
+            .overview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="geo-ring"></div>
+    <div class="geo-ring"></div>
+    <div class="geo-ring"></div>
+
+    <div class="corner-data tl">SYS.ONLINE<br>NODE <span>ALPHA-7</span><br>BUILD 3.0</div>
+    <div class="corner-data tr">USR:<span>{{ current_user.username }}</span><br>ID:<span>{{ current_user.id }}</span><br>SESSION ACTIVE</div>
+    <div class="corner-data bl">INFINITE MODE<br>SQRT SCALING<br>PROCEDURAL</div>
+    <div class="corner-data br">FRAME <span>60</span><br>SYNC <span>OK</span><br>LATENCY 12ms</div>
+
+    <header class="header">
+        <div class="logo-group">
+            <div class="logo">MATHLY</div>
+            <div class="logo-tag">SKILL MATRIX ANALYSIS</div>
+        </div>
+        <div class="header-stats">
+            <div class="stat">
+                <div class="stat-label">Level</div>
+                <div class="stat-value">{{ current_user.level }}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Available EXP</div>
+                <div class="stat-value">{{ total_exp }}</div>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">HOME</a>
+                <a href="/play" class="nav-link">TRAINING</a>
+                <a href="/logout" class="nav-link">LOGOUT</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="page-header">
+            <h1 class="page-title">Skill <strong>Matrix</strong></h1>
+            <div class="page-meta">
+                OPERATOR: {{ current_user.username|upper }}<br>
+                MODE: INFINITE
+            </div>
+        </div>
+
+        <div class="overview-grid">
+            <div class="overview-card" data-label="AVAILABLE">
+                <div class="overview-value">{{ total_exp }}</div>
+                <div class="overview-label">Current EXP</div>
+            </div>
+            <div class="overview-card" data-label="EARNED">
+                <div class="overview-value">{{ total_exp_earned }}</div>
+                <div class="overview-label">Total EXP Earned</div>
+            </div>
+            <div class="overview-card" data-label="PROBLEMS">
+                <div class="overview-value">{{ total_problems }}</div>
+                <div class="overview-label">Total Solved</div>
+            </div>
+            <div class="overview-card" data-label="SECTORS">
+                <div class="overview-value">{{ skills|length }}</div>
+                <div class="overview-label">Training Sectors</div>
+            </div>
+        </div>
+
+        <div class="skills-grid">
+            {% for skill in skills %}
+            <div class="skill-card">
+                <div class="skill-header">
+                    <div class="skill-icon">{{ skill.icon }}</div>
+                    <div class="skill-title-group">
+                        <div class="skill-name">{{ skill.name }}</div>
+                        <div class="skill-ref">SECTOR:{{ skill.key|upper }} // {{ skill.difficulty }}</div>
+                    </div>
+                    <div class="skill-level">
+                        <div class="skill-level-label">Level</div>
+                        <div class="skill-level-value">{{ skill.level }}</div>
+                    </div>
+                </div>
+
+                <div class="skill-stats">
+                    <div class="skill-stat">
+                        <div class="skill-stat-value">{{ skill.total_exp }}</div>
+                        <div class="skill-stat-label">EXP Earned</div>
+                    </div>
+                    <div class="skill-stat">
+                        <div class="skill-stat-value">{{ skill.total_solved }}</div>
+                        <div class="skill-stat-label">Problems</div>
+                    </div>
+                    <div class="skill-stat">
+                        <div class="skill-stat-value">{{ skill.difficulty }}</div>
+                        <div class="skill-stat-label">Difficulty</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <div class="data-strip">
+        <span>MATHLY.SYS</span>
+        <span>|</span>
+        SKILL ANALYSIS
+        <span>|</span>
+        MODE: INFINITE
+        <span>|</span>
+        SCALING: SQRT
+    </div>
+</body>
+</html>

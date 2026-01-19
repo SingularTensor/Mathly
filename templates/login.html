@@ -1,35 +1,313 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-    <title>{{ mode }}</title>
+    <title>MATHLY // {{ mode|upper }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #08080a;
+            --bg-panel: rgba(12, 12, 14, 0.95);
+            --bg-elevated: rgba(20, 20, 22, 0.9);
+            --text: #d1dce5;
+            --text-dim: #6b7280;
+            --text-muted: #4a4f57;
+            --accent: #1a3d34;
+            --accent-light: #2a5d4a;
+            --border: #1c1c1e;
+            --border-light: #2a2a2e;
+            --success: #2d5a47;
+            --error: #5a2d2d;
+            --error-light: #7a3d3d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* === BACKGROUND === */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .geo-ring {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(26, 61, 52, 0.12);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: slowRotate 200s linear infinite;
+        }
+        .geo-ring.r1 { width: 500px; height: 500px; }
+        .geo-ring.r2 { width: 700px; height: 700px; animation-direction: reverse; animation-duration: 180s; }
+
+        @keyframes slowRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* === CORNER DATA === */
+        .corner-data {
+            position: fixed;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 100;
+            line-height: 1.6;
+        }
+        .corner-data.tl { top: 15px; left: 15px; }
+        .corner-data.tr { top: 15px; right: 15px; text-align: right; }
+        .corner-data.bl { bottom: 45px; left: 15px; }
+        .corner-data.br { bottom: 45px; right: 15px; text-align: right; }
+        .corner-data span { color: var(--accent-light); }
+
+        /* === MAIN === */
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* === AUTH CARD === */
+        .auth-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 50px;
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+        }
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: var(--accent);
+        }
+
+        /* === HEADER === */
+        .auth-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .auth-logo {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .auth-mode {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* === ERROR MESSAGE === */
+        .error-msg {
+            background: rgba(90, 45, 45, 0.3);
+            border: 1px solid var(--error);
+            color: var(--error-light);
+            padding: 12px 15px;
+            margin-bottom: 25px;
+            font-size: 13px;
+        }
+
+        /* === FORM === */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 14px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* === SUBMIT === */
+        .submit-btn {
+            width: 100%;
+            background: var(--accent);
+            border: none;
+            color: var(--text);
+            padding: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background: var(--accent-light);
+        }
+
+        /* === DIVIDER === */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 30px 0;
+        }
+
+        /* === ALT LINK === */
+        .alt-link {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+        .alt-link a {
+            color: var(--accent-light);
+            text-decoration: none;
+        }
+        .alt-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* === BACK LINK === */
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 50;
+        }
+        .back-link:hover {
+            color: var(--text);
+        }
+
+        /* === DATA STRIP === */
+        .data-strip {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 30px;
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            gap: 30px;
+            z-index: 100;
+        }
+        .data-strip span { color: var(--text-dim); }
+    </style>
 </head>
 <body>
-    <main>
-        <h2>{{ mode }}</h2>
-        
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <p style="color: red; background: #ffdddd; padding: 10px;">{{ messages[0] }}</p>
-            {% endif %}
-        {% endwith %}
+    <div class="bg-grid"></div>
+    <div class="geo-ring r1"></div>
+    <div class="geo-ring r2"></div>
 
-        <form method="POST">
-            <label>Username</label>
-            <input type="text" name="username" required>
-            
-            <label>Password</label>
-            <input type="password" name="password" required>
-            
-            <button type="submit">{{ mode }}</button>
-        </form>
+    <div class="corner-data tl">AUTH.PROTOCOL<br>MODE:<span>{{ mode|upper }}</span><br>SECURE</div>
+    <div class="corner-data tr">ENCRYPT:<span>AES-256</span><br>CHANNEL SECURE<br>AWAITING INPUT</div>
+    <div class="corner-data bl">X:127.001<br>Y:001.000<br>Z:001.000</div>
+    <div class="corner-data br">FRAME <span>60</span><br>SYNC <span>OK</span><br>AUTH READY</div>
 
-        <hr>
-        {% if mode == 'Login' %}
-            <p>New? <a href="/register">Create Account</a></p>
-        {% else %}
-            <p>Returning? <a href="/login">Login Here</a></p>
-        {% endif %}
+    <a href="/" class="back-link">< RETURN</a>
+
+    <main class="main">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">MATHLY</div>
+                <div class="auth-mode">{{ mode }} Protocol</div>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="error-msg">{{ messages[0] }}</div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label class="form-label">{% if mode == 'Login' %}Username or Email{% else %}Username{% endif %}</label>
+                    <input type="text" name="username" class="form-input" required>
+                </div>
+
+                {% if mode == 'Register' %}
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-input" required>
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-input" required>
+                </div>
+
+                <button type="submit" class="submit-btn">{{ mode|upper }}</button>
+            </form>
+
+            <hr class="divider">
+
+            <p class="alt-link">
+                {% if mode == 'Login' %}
+                    New operative? <a href="/register">Create Account</a>
+                {% else %}
+                    Returning? <a href="/login">Login Here</a>
+                {% endif %}
+            </p>
+        </div>
     </main>
+
+    <div class="data-strip">
+        <span>MATHLY.SYS</span>
+        <span>|</span>
+        AUTH: ACTIVE
+        <span>|</span>
+        SECURE CHANNEL
+        <span>|</span>
+        ENCRYPT: ON
+    </div>
 </body>
 </html>

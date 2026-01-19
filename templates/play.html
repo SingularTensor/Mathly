@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MATHLY // SECTORS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #08080a;
+            --bg-panel: rgba(12, 12, 14, 0.95);
+            --bg-elevated: rgba(20, 20, 22, 0.9);
+            --text: #d1dce5;
+            --text-dim: #6b7280;
+            --text-muted: #4a4f57;
+            --accent: #1a3d34;
+            --accent-light: #2a5d4a;
+            --border: #1c1c1e;
+            --border-light: #2a2a2e;
+            --success: #2d5a47;
+            --error: #5a2d2d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .geo-ring {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px; height: 800px;
+            border: 1px solid rgba(26, 61, 52, 0.15);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: slowRotate 200s linear infinite;
+        }
+        .geo-ring:nth-child(2) { width: 600px; height: 600px; animation-duration: 180s; animation-direction: reverse; }
+        .geo-ring:nth-child(3) { width: 1000px; height: 1000px; animation-duration: 240s; border-style: dashed; }
+
+        @keyframes slowRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .corner-data {
+            position: fixed;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 100;
+            line-height: 1.6;
+        }
+        .corner-data.tl { top: 15px; left: 15px; }
+        .corner-data.tr { top: 15px; right: 15px; text-align: right; }
+        .corner-data.bl { bottom: 15px; left: 15px; }
+        .corner-data.br { bottom: 15px; right: 15px; text-align: right; }
+        .corner-data span { color: var(--accent-light); }
+
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 50;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text);
+        }
+
+        .logo-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .stat {
+            text-align: right;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        .stat-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+        .nav-link {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--text);
+            border-color: var(--accent);
+            background: rgba(26, 61, 52, 0.1);
+        }
+
+        .main {
+            padding: 40px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .page-title strong {
+            font-weight: 600;
+            color: var(--accent-light);
+        }
+
+        .page-meta {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .sectors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .sector-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 25px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .sector-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: var(--accent);
+        }
+
+        .sector-card:hover {
+            border-color: var(--accent);
+        }
+
+        .sector-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sector-icon {
+            width: 50px; height: 50px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--text-dim);
+            background: var(--bg);
+        }
+
+        .sector-info h3 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .sector-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .sector-level {
+            position: absolute;
+            top: 15px; right: 15px;
+        }
+
+        .level-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .level-display {
+            text-align: center;
+        }
+
+        .level-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .level-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text);
+            display: block;
+        }
+
+        .level-arrow {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            width: 24px;
+            height: 24px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .level-arrow:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .sector-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+
+        .sector-stat {
+            text-align: center;
+        }
+        .sector-stat-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sector-stat-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .sector-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sector-btn {
+            flex: 1;
+            padding: 12px 15px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .sector-btn.play {
+            background: var(--accent);
+            color: var(--text);
+        }
+        .sector-btn.play:hover {
+            background: var(--accent-light);
+        }
+
+        .sector-btn.upgrade {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+        .sector-btn.upgrade:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+        .sector-btn.upgrade:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .sector-btn.upgrade.can-upgrade {
+            border-color: var(--success);
+            color: var(--success);
+        }
+        .sector-btn.upgrade.can-upgrade:hover {
+            background: rgba(45, 90, 71, 0.2);
+        }
+
+        .sector-card.locked {
+            opacity: 0.5;
+        }
+        .sector-card.locked::before {
+            background: var(--error);
+        }
+        .sector-card.locked .sector-actions {
+            pointer-events: none;
+        }
+        .sector-card.locked .level-selector {
+            visibility: hidden;
+        }
+        .sector-card.locked .sector-stats {
+            filter: blur(2px);
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-panel);
+            border: 1px solid var(--error);
+            padding: 8px 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--error);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+
+        .upgrade-cost {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .data-strip {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 30px;
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            gap: 30px;
+            z-index: 100;
+        }
+        .data-strip span { color: var(--text-dim); }
+
+        @keyframes upgradeFlash {
+            0% { background: rgba(45, 90, 71, 0.4); }
+            100% { background: transparent; }
+        }
+        .sector-card.upgraded {
+            animation: upgradeFlash 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="geo-ring"></div>
+    <div class="geo-ring"></div>
+    <div class="geo-ring"></div>
+
+    <div class="corner-data tl">SYS.ONLINE<br>NODE <span>ALPHA-7</span><br>BUILD 3.0</div>
+    <div class="corner-data tr">USR:<span>{{ current_user.username }}</span><br>ID:<span>{{ current_user.id }}</span><br>SESSION ACTIVE</div>
+    <div class="corner-data bl">PROCEDURAL GEN<br>INFINITE SCALING<br>SQRT COST</div>
+    <div class="corner-data br">FRAME <span>60</span><br>SYNC <span>OK</span><br>LATENCY 12ms</div>
+
+    <header class="header">
+        <div class="logo-group">
+            <div class="logo">MATHLY</div>
+            <div class="logo-tag">INFINITE TRAINING v3.0</div>
+        </div>
+        <div class="header-stats">
+            <div class="stat">
+                <div class="stat-label">Level</div>
+                <div class="stat-value">{{ current_user.level }}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Experience</div>
+                <div class="stat-value" id="user-exp">{{ current_user.exp }}</div>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">HOME</a>
+                <a href="/skills" class="nav-link">SKILLS</a>
+                <a href="/logout" class="nav-link">LOGOUT</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="page-header">
+            <h1 class="page-title">Training <strong>Sectors</strong></h1>
+            <div class="page-meta">
+                SECTORS: {{ sectors|length }}<br>
+                MODE: INFINITE
+            </div>
+        </div>
+
+        <div class="sectors-grid">
+            {% for sector in sectors %}
+            <div class="sector-card {% if not sector.available %}locked{% endif %}" id="sector-{{ sector.key }}"
+                 style="--sector-color: {{ sector.color }}"
+                 data-max-level="{{ sector.level }}"
+                 data-section="{{ sector.key }}">
+                {% if not sector.available %}
+                <div class="coming-soon-badge">Coming Soon</div>
+                {% endif %}
+                <div class="sector-level">
+                    <div class="level-selector">
+                        <button class="level-arrow left"
+                                id="arrow-left-{{ sector.key }}"
+                                onclick="changeLevel('{{ sector.key }}', -1)"
+                                {% if sector.level <= 1 %}style="visibility: hidden;"{% endif %}>
+                            <
+                        </button>
+                        <div class="level-display">
+                            <span class="level-label">LVL</span>
+                            <span class="level-value" id="selected-level-{{ sector.key }}">{{ sector.level }}</span>
+                        </div>
+                        <button class="level-arrow right"
+                                id="arrow-right-{{ sector.key }}"
+                                onclick="changeLevel('{{ sector.key }}', 1)"
+                                style="visibility: hidden;">
+                            >
+                        </button>
+                    </div>
+                </div>
+                <div class="sector-header">
+                    <div class="sector-icon">{{ sector.icon }}</div>
+                    <div class="sector-info">
+                        <h3>{{ sector.name }}</h3>
+                        <p id="difficulty-{{ sector.key }}">{{ sector.difficulty }}</p>
+                    </div>
+                </div>
+
+                <div class="sector-stats">
+                    <div class="sector-stat">
+                        <div class="sector-stat-label">Range</div>
+                        <div class="sector-stat-value" id="range-{{ sector.key }}">{{ sector.range }}</div>
+                    </div>
+                    <div class="sector-stat">
+                        <div class="sector-stat-label">Per Problem</div>
+                        <div class="sector-stat-value" id="exp-{{ sector.key }}">+{{ sector.exp_per_problem }} XP</div>
+                    </div>
+                    <div class="sector-stat">
+                        <div class="sector-stat-label">Solved</div>
+                        <div class="sector-stat-value">{{ sector.total_solved }}</div>
+                    </div>
+                    <div class="sector-stat">
+                        <div class="sector-stat-label">Total EXP</div>
+                        <div class="sector-stat-value">{{ sector.total_exp }}</div>
+                    </div>
+                </div>
+
+                <div class="sector-actions">
+                    <a href="/play/{{ sector.key }}/{{ sector.level }}"
+                       class="sector-btn play"
+                       id="train-btn-{{ sector.key }}">TRAIN</a>
+                    <button class="sector-btn upgrade {% if sector.can_upgrade %}can-upgrade{% endif %}"
+                            id="upgrade-btn-{{ sector.key }}"
+                            onclick="upgradeSector('{{ sector.key }}')"
+                            {% if not sector.can_upgrade %}disabled{% endif %}>
+                        UPGRADE
+                        <span class="upgrade-cost" id="cost-{{ sector.key }}">{{ sector.upgrade_cost }} XP</span>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <div class="data-strip">
+        <span>MATHLY.SYS</span>
+        <span>|</span>
+        PROCESS: ACTIVE
+        <span>|</span>
+        SCALING: SQRT
+        <span>|</span>
+        NET: STABLE
+    </div>
+
+    <script>
+        const sectorData = {};
+        document.querySelectorAll('.sector-card').forEach(card => {
+            const section = card.dataset.section;
+            sectorData[section] = {
+                maxLevel: parseInt(card.dataset.maxLevel),
+                selectedLevel: parseInt(card.dataset.maxLevel)
+            };
+        });
+
+        function changeLevel(section, delta) {
+            const data = sectorData[section];
+            const newLevel = data.selectedLevel + delta;
+
+            if (newLevel < 1 || newLevel > data.maxLevel) return;
+
+            data.selectedLevel = newLevel;
+
+            document.getElementById(`selected-level-${section}`).textContent = newLevel;
+            document.getElementById(`train-btn-${section}`).href = `/play/${section}/${newLevel}`;
+
+            const leftArrow = document.getElementById(`arrow-left-${section}`);
+            const rightArrow = document.getElementById(`arrow-right-${section}`);
+
+            leftArrow.style.visibility = newLevel <= 1 ? 'hidden' : 'visible';
+            rightArrow.style.visibility = newLevel >= data.maxLevel ? 'hidden' : 'visible';
+        }
+
+        async function upgradeSector(section) {
+            const btn = document.getElementById(`upgrade-btn-${section}`);
+            btn.disabled = true;
+            btn.textContent = 'UPGRADING...';
+
+            try {
+                const res = await fetch(`/upgrade/${section}`, { method: 'POST' });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('user-exp').textContent = data.remaining_exp;
+                    document.getElementById(`selected-level-${section}`).textContent = data.new_level;
+                    document.getElementById(`difficulty-${section}`).textContent = data.difficulty;
+                    document.getElementById(`range-${section}`).textContent = data.range;
+                    document.getElementById(`exp-${section}`).textContent = `+${data.exp_per_problem} XP`;
+                    document.getElementById(`cost-${section}`).textContent = `${data.next_upgrade_cost} XP`;
+
+                    sectorData[section].maxLevel = data.new_level;
+                    sectorData[section].selectedLevel = data.new_level;
+                    document.getElementById(`train-btn-${section}`).href = `/play/${section}/${data.new_level}`;
+
+                    const leftArrow = document.getElementById(`arrow-left-${section}`);
+                    leftArrow.style.visibility = data.new_level > 1 ? 'visible' : 'hidden';
+                    document.getElementById(`arrow-right-${section}`).style.visibility = 'hidden';
+
+                    const card = document.getElementById(`sector-${section}`);
+                    card.dataset.maxLevel = data.new_level;
+                    card.classList.add('upgraded');
+                    setTimeout(() => card.classList.remove('upgraded'), 500);
+
+                    btn.innerHTML = `UPGRADE<span class="upgrade-cost">${data.next_upgrade_cost} XP</span>`;
+
+                    if (data.can_upgrade) {
+                        btn.disabled = false;
+                        btn.classList.add('can-upgrade');
+                    } else {
+                        btn.classList.remove('can-upgrade');
+                    }
+
+                    updateAllUpgradeButtons(data.remaining_exp);
+                } else {
+                    btn.innerHTML = `UPGRADE<span class="upgrade-cost">${document.getElementById(`cost-${section}`).textContent}</span>`;
+                    alert(data.error || 'Upgrade failed');
+                }
+            } catch (err) {
+                btn.innerHTML = `UPGRADE<span class="upgrade-cost">${document.getElementById(`cost-${section}`).textContent}</span>`;
+                console.error(err);
+            }
+        }
+
+        function updateAllUpgradeButtons(userExp) {
+            document.querySelectorAll('.sector-btn.upgrade').forEach(btn => {
+                const costEl = btn.querySelector('.upgrade-cost');
+                if (costEl) {
+                    const cost = parseInt(costEl.textContent);
+                    if (userExp >= cost) {
+                        btn.disabled = false;
+                        btn.classList.add('can-upgrade');
+                    } else {
+                        btn.disabled = true;
+                        btn.classList.remove('can-upgrade');
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,24 +1,123 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Quiz Game</title>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-</head>
-<body>
-    <header>
-        <h1>Quiz Game</h1>
-    </header>
-    
-    <main>
-        {% if quizzes %}
-            <ul>
-            {% for quiz in quizzes %}
-                <li><a href="/quiz/{{ quiz.id }}">{{ quiz.title }} ({{ quiz.difficulty }})</a></li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>No quizzes available.</p>
-        {% endif %}
-    </main>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<!-- HEADER -->
+<div class="center-header">
+    <div class="center-title">MATH<strong style="color:var(--accent-light)">LY</strong> // PRIMARY DISPLAY</div>
+    <div class="center-ref">REF: 0xF9AA // MODE: ALPHA-7</div>
+</div>
+
+<!-- SYSTEM METRICS -->
+<div class="data-panel span-full" data-label="SYSTEM METRICS">
+    <div class="metrics-row">
+        <div class="metric-item">
+            <div class="metric-value">4</div>
+            <div class="metric-label">SECTORS</div>
+            <div class="mini-chart">
+                <div class="mini-chart-bar active" style="height: 40%"></div>
+                <div class="mini-chart-bar active" style="height: 60%"></div>
+                <div class="mini-chart-bar active" style="height: 30%"></div>
+                <div class="mini-chart-bar active" style="height: 80%"></div>
+            </div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-value">20+</div>
+            <div class="metric-label">MODULES</div>
+            <div class="mini-chart">
+                <div class="mini-chart-bar active" style="height: 50%"></div>
+                <div class="mini-chart-bar active" style="height: 50%"></div>
+                <div class="mini-chart-bar" style="height: 20%"></div>
+                <div class="mini-chart-bar" style="height: 20%"></div>
+            </div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-value">INF</div>
+            <div class="metric-label">PROBLEMS</div>
+            <div class="mini-chart">
+                <div class="mini-chart-bar active" style="height: 90%"></div>
+                <div class="mini-chart-bar active" style="height: 90%"></div>
+                <div class="mini-chart-bar active" style="height: 90%"></div>
+                <div class="mini-chart-bar active" style="height: 90%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DATA GRID / MEMORY ALLOCATION -->
+<div class="data-panel" data-label="MEMORY ALLOCATION">
+    <div class="hex-readout" style="margin-bottom: 10px;">
+        <div class="hex-line"><span class="hex-addr">0x00A0</span> <span>4A 7F 3B 2C</span></div>
+        <div class="hex-line"><span class="hex-addr">0x00B0</span> <span>9C 1D 5E 8F</span></div>
+        <div class="hex-line"><span class="hex-addr">0x00C0</span> <span>D2 E3 7A 1F</span></div>
+    </div>
+    <div class="status-matrix">
+        {% for i in range(32) %}
+        <div class="matrix-cell {% if i in [5, 12, 18, 24, 25, 29] %}on{% endif %}"></div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- SPATIAL COORDS -->
+<div class="data-panel" data-label="SPATIAL COORDINATES">
+    <div class="coord-grid">
+        <div class="coord-item">
+            <div class="coord-value">127.4</div>
+            <div class="coord-label">X-POS</div>
+        </div>
+        <div class="coord-item">
+            <div class="coord-value">892.1</div>
+            <div class="coord-label">Y-POS</div>
+        </div>
+        <div class="coord-item">
+            <div class="coord-value">001.0</div>
+            <div class="coord-label">Z-POS</div>
+        </div>
+        <div class="coord-item">
+            <div class="coord-value">0x7F</div>
+            <div class="coord-label">SECTOR</div>
+        </div>
+        <div class="coord-item">
+            <div class="coord-value">45.2</div>
+            <div class="coord-label">YAW</div>
+        </div>
+        <div class="coord-item">
+            <div class="coord-value">12.8</div>
+            <div class="coord-label">PITCH</div>
+        </div>
+        <div class="coord-item">
+            <div class="coord-value">0.0</div>
+            <div class="coord-label">ROLL</div>
+        </div>
+        <div class="coord-item">
+            <div class="coord-value">1.00</div>
+            <div class="coord-label">SCALE</div>
+        </div>
+    </div>
+</div>
+
+<!-- DATA STREAM -->
+<div class="data-panel span-full" data-label="DATA STREAM">
+    <div class="data-ticker">
+        <div class="data-ticker-inner">
+            T:OK // MEM_ALLOC:64K // CPU_LOAD:12% // NET_STATUS:STABLE // AUTH_MODULE:ACTIVE // PROB_GEN:READY //
+            DB_CONN:ESTABLISHED // CACHE:WARM // QUEUE:EMPTY // HEARTBEAT:OK // SYS_INIT:OK
+        </div>
+    </div>
+</div>
+
+<!-- ACTIONS -->
+<div class="action-corner">
+    <div class="action-corner-label">ACTIONS AVAILABLE</div>
+    {% if not current_user.is_authenticated %}
+    <a href="{{ url_for('login') }}" class="corner-btn">INIT_SESSION</a>
+    <a href="{{ url_for('register') }}" class="corner-btn primary">NEW_OPERATIVE</a>
+    <div class="signal-dots">
+        <div class="signal-dot active"></div>
+        <div class="signal-dot"></div>
+        <div class="signal-dot"></div>
+    </div>
+    {% else %}
+    <a href="{{ url_for('play') }}" class="corner-btn primary">ENTER SIMULATION</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MATHLY // SOLVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #08080a;
+            --bg-panel: rgba(12, 12, 14, 0.95);
+            --bg-elevated: rgba(20, 20, 22, 0.9);
+            --text: #d1dce5;
+            --text-dim: #6b7280;
+            --text-muted: #4a4f57;
+            --accent: #1a3d34;
+            --accent-light: #2a5d4a;
+            --border: #1c1c1e;
+            --border-light: #2a2a2e;
+            --success: #2d5a47;
+            --error: #5a2d2d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .geo-ring {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(26, 61, 52, 0.12);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: slowRotate 200s linear infinite;
+        }
+        .geo-ring.r1 { width: 500px; height: 500px; }
+        .geo-ring.r2 { width: 700px; height: 700px; animation-direction: reverse; animation-duration: 180s; }
+
+        @keyframes slowRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .corner-data {
+            position: fixed;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 100;
+            line-height: 1.6;
+        }
+        .corner-data.tl { top: 15px; left: 15px; }
+        .corner-data.tr { top: 15px; right: 15px; text-align: right; }
+        .corner-data.bl { bottom: 15px; left: 15px; }
+        .corner-data.br { bottom: 15px; right: 15px; text-align: right; }
+        .corner-data span { color: var(--accent-light); }
+
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 50;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text);
+        }
+
+        .logo-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .stat {
+            text-align: right;
+        }
+        .stat-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+        .nav-link {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 70px);
+            padding: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .problem-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 40px 50px;
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+        }
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: var(--accent);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .level-info h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .level-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .level-badge {
+            text-align: right;
+        }
+        .level-badge-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .level-badge-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 28px;
+            font-weight: 500;
+        }
+
+        .question-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .question-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .question-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 48px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .equals {
+            font-size: 36px;
+            color: var(--text-dim);
+        }
+
+        .answer-slot {
+            width: 120px;
+            height: 80px;
+            border: 2px dashed var(--border-light);
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 36px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .answer-slot.active {
+            border-style: solid;
+            border-color: var(--accent);
+            color: var(--text);
+            background: rgba(26, 61, 52, 0.1);
+        }
+
+        .answer-slot.drag-over {
+            border-color: var(--accent-light);
+            background: rgba(26, 61, 52, 0.2);
+        }
+
+        .options-area {
+            margin-bottom: 35px;
+        }
+
+        .options-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .option-card {
+            width: 90px;
+            height: 90px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 28px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+        }
+
+        .option-card.selected {
+            border-color: var(--success);
+            opacity: 0.5;
+        }
+
+        .option-card.dragging {
+            opacity: 0.3;
+        }
+
+        .option-ref {
+            position: absolute;
+            top: 4px; left: 6px;
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+
+        .submit-area {
+            text-align: center;
+        }
+
+        .submit-btn {
+            background: var(--accent);
+            border: none;
+            color: var(--text);
+            padding: 14px 50px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: var(--accent-light);
+        }
+
+        .submit-btn:disabled {
+            background: var(--border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .result-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(8, 8, 10, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .result-overlay.show { display: flex; }
+
+        .result-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 50px 70px;
+            text-align: center;
+            position: relative;
+        }
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+        }
+        .result-card.correct::before { background: var(--success); }
+        .result-card.wrong::before { background: var(--error); }
+
+        .result-status {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        .result-status.correct { color: var(--success); }
+        .result-status.wrong { color: var(--error); }
+
+        .result-exp {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 24px;
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .result-info {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin-bottom: 30px;
+        }
+
+        .result-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .result-btn {
+            font-size: 12px;
+            padding: 12px 30px;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            background: transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .result-btn:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        .result-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--text);
+        }
+        .result-btn.primary:hover {
+            background: var(--accent-light);
+        }
+
+        .data-strip {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 28px;
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            gap: 25px;
+            z-index: 100;
+        }
+        .data-strip span { color: var(--text-dim); }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="geo-ring r1"></div>
+    <div class="geo-ring r2"></div>
+
+    <div class="corner-data tl">MODE:<span>SOLVE</span><br>SECTOR:{{ section|upper }}<br>DIFF:{{ difficulty }}</div>
+    <div class="corner-data tr">LVL:<span>{{ user_level }}</span><br>REWARD:+{{ problem.exp_reward }}<br>SESSION ACTIVE</div>
+    <div class="corner-data bl">RANGE:<span>{{ range_display }}</span><br>PROCEDURAL<br>INFINITE</div>
+    <div class="corner-data br">FRAME <span>60</span><br>SYNC <span>OK</span><br>PROC READY</div>
+
+    <header class="header">
+        <div class="logo-group">
+            <div class="logo">MATHLY</div>
+            <div class="logo-tag">SOLVE PROTOCOL</div>
+        </div>
+        <div class="header-stats">
+            <div class="stat">
+                <div class="stat-label">Exp</div>
+                <div class="stat-value" id="exp-display">{{ current_user.exp }}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Level</div>
+                <div class="stat-value">{{ current_user.level }}</div>
+            </div>
+            <div class="nav-links">
+                <a href="/play" class="nav-link">SECTORS</a>
+                <a href="/" class="nav-link">HOME</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="problem-card">
+            <div class="card-header">
+                <div class="level-info">
+                    <h2>{{ section_name }}</h2>
+                    <p>{{ difficulty }} Difficulty</p>
+                </div>
+                <div class="level-badge">
+                    <div class="level-badge-label">Sector Level</div>
+                    <div class="level-badge-value">{{ user_level }}</div>
+                </div>
+            </div>
+
+            <div class="question-area">
+                <div class="question-display">
+                    <span class="question-text">{{ problem.question }}</span>
+                    <span class="equals">=</span>
+                    <div class="answer-slot" id="answer-slot">?</div>
+                </div>
+            </div>
+
+            <div class="options-area">
+                <div class="options-label">Select Answer</div>
+                <div class="options-grid" id="options">
+                    {% for opt in problem.options %}
+                    <div class="option-card" draggable="true" data-value="{{ opt }}">
+                        <span class="option-ref">{{ loop.index }}</span>
+                        {{ opt }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="submit-area">
+                <button class="submit-btn" id="submit-btn" disabled onclick="submitAnswer()">
+                    EXECUTE
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div class="result-overlay" id="result-overlay">
+        <div class="result-card" id="result-card">
+            <div class="result-status" id="result-status"></div>
+            <div class="result-exp" id="result-exp"></div>
+            <div class="result-info" id="result-info"></div>
+            <div class="result-buttons">
+                <a href="/play/{{ section }}/{{ user_level }}" class="result-btn primary">NEXT</a>
+                <a href="/play" class="result-btn">RETURN TO SECTORS</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="data-strip">
+        <span>MATHLY.SYS</span>
+        <span>|</span>
+        SOLVE: ACTIVE
+        <span>|</span>
+        INPUT: READY
+        <span>|</span>
+        PROC: STANDBY
+    </div>
+
+    <script>
+        const answerSlot = document.getElementById('answer-slot');
+        const options = document.querySelectorAll('.option-card');
+        const submitBtn = document.getElementById('submit-btn');
+        let selectedAnswer = null;
+        let selectedCard = null;
+
+        options.forEach(opt => {
+            opt.addEventListener('dragstart', e => {
+                e.target.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', e.target.dataset.value);
+            });
+            opt.addEventListener('dragend', e => e.target.classList.remove('dragging'));
+            opt.addEventListener('click', () => selectAnswer(opt.dataset.value, opt));
+        });
+
+        answerSlot.addEventListener('dragover', e => {
+            e.preventDefault();
+            answerSlot.classList.add('drag-over');
+        });
+        answerSlot.addEventListener('dragleave', () => answerSlot.classList.remove('drag-over'));
+        answerSlot.addEventListener('drop', e => {
+            e.preventDefault();
+            answerSlot.classList.remove('drag-over');
+            const val = e.dataTransfer.getData('text/plain');
+            const card = document.querySelector(`.option-card[data-value="${val}"]`);
+            selectAnswer(val, card);
+        });
+
+        function selectAnswer(value, card) {
+            if (selectedCard) selectedCard.classList.remove('selected');
+            selectedAnswer = value;
+            selectedCard = card;
+            card.classList.add('selected');
+            answerSlot.textContent = value;
+            answerSlot.classList.add('active');
+            submitBtn.disabled = false;
+        }
+
+        async function submitAnswer() {
+            if (!selectedAnswer) return;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'PROCESSING...';
+
+            const res = await fetch('/check_answer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answer: selectedAnswer })
+            });
+            const data = await res.json();
+            showResult(data);
+        }
+
+        function showResult(data) {
+            const overlay = document.getElementById('result-overlay');
+            const card = document.getElementById('result-card');
+            const status = document.getElementById('result-status');
+            const exp = document.getElementById('result-exp');
+            const info = document.getElementById('result-info');
+
+            card.classList.remove('correct', 'wrong');
+
+            if (data.correct) {
+                card.classList.add('correct');
+                status.className = 'result-status correct';
+                status.textContent = 'CORRECT';
+                exp.textContent = `+${data.exp_gained} EXP`;
+                exp.style.display = 'block';
+                info.textContent = `Total solved in sector: ${data.total_solved}`;
+                document.getElementById('exp-display').textContent = data.total_exp;
+            } else {
+                card.classList.add('wrong');
+                status.className = 'result-status wrong';
+                status.textContent = 'INCORRECT';
+                exp.style.display = 'none';
+                info.textContent = `Expected: ${data.expected}`;
+            }
+            overlay.classList.add('show');
+        }
+    </script>
+</body>
+</html>
