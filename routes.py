@@ -1,4 +1,5 @@
-from flask import render_template, request, jsonify, redirect, url_for, flash, session
+from functools import wraps
+from flask import render_template, request, jsonify, redirect, url_for, flash, session, abort
 from flask_login import login_user, logout_user, login_required, current_user
 
 from app import app
@@ -7,6 +8,15 @@ from database import (
     generate_problem, get_upgrade_cost, get_difficulty_name,
     get_exp_reward, get_difficulty_params, SECTION_CONFIG
 )
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 SECTIONS_DISPLAY = {
@@ -159,6 +169,20 @@ def play_section(section, level=None):
         flash('Invalid level!')
         return redirect(url_for('play'))
 
+    force_new = request.args.get('new') == '1'
+    quiz_session = session.get('quiz_session')
+
+    if force_new or not quiz_session or quiz_session.get('section') != section or quiz_session.get('level') != level or quiz_session.get('completed') or quiz_session.get('lives', 0) <= 0:
+        session['quiz_session'] = {
+            'section': section,
+            'level': level,
+            'current_problem': 1,
+            'total_problems': 7,
+            'lives': 3,
+            'accumulated_exp': 0,
+            'completed': False
+        }
+
     problem = generate_problem(section, level)
     session['current_problem'] = problem
 
@@ -171,7 +195,8 @@ def play_section(section, level=None):
                          section_name=display.get('name', section.title()),
                          user_level=level,
                          difficulty=difficulty,
-                         range_display=f"{min_num}-{max_num}")
+                         range_display=f"{min_num}-{max_num}",
+                         quiz_session=session['quiz_session'])
 
 
 @app.route('/check_answer', methods=['POST'])
@@ -181,11 +206,15 @@ def check_answer():
     user_answer = data.get('answer')
 
     problem = session.get('current_problem')
+    quiz_session = session.get('quiz_session')
+
     if not problem:
         return jsonify({'error': 'No active problem'}), 400
 
+    if not quiz_session:
+        return jsonify({'error': 'No active quiz session'}), 400
+
     is_correct = int(user_answer) == problem['correct']
-    exp_gained = 0
     section = problem['section']
 
     progress = UserSectorProgress.query.filter_by(
@@ -203,22 +232,45 @@ def check_answer():
         )
         db.session.add(progress)
 
-    if is_correct:
-        exp_gained = problem['exp_reward']
-        current_user.exp += exp_gained
-        progress.total_problems_solved += 1
-        progress.total_exp_earned += exp_gained
-        db.session.commit()
+    session_complete = False
+    session_failed = False
+    exp_gained = 0
+    total_exp_awarded = 0
 
+    if is_correct:
+        quiz_session['accumulated_exp'] += problem['exp_reward']
+
+        if quiz_session['current_problem'] >= quiz_session['total_problems']:
+            session_complete = True
+            quiz_session['completed'] = True
+            total_exp_awarded = quiz_session['accumulated_exp']
+            current_user.exp += total_exp_awarded
+            progress.total_problems_solved += quiz_session['total_problems']
+            progress.total_exp_earned += total_exp_awarded
+            db.session.commit()
+        else:
+            quiz_session['current_problem'] += 1
+    else:
+        quiz_session['lives'] -= 1
+        if quiz_session['lives'] <= 0:
+            session_failed = True
+
+    session['quiz_session'] = quiz_session
     session.pop('current_problem', None)
 
     return jsonify({
         'correct': is_correct,
         'expected': problem['correct'],
-        'exp_gained': exp_gained,
+        'exp_gained': problem['exp_reward'] if is_correct else 0,
         'total_exp': current_user.exp,
         'total_solved': progress.total_problems_solved,
-        'section': section
+        'section': section,
+        'current_problem': quiz_session['current_problem'],
+        'total_problems': quiz_session['total_problems'],
+        'lives': quiz_session['lives'],
+        'session_complete': session_complete,
+        'session_failed': session_failed,
+        'total_exp_awarded': total_exp_awarded
     })
 
 
@@ -308,3 +360,102 @@ def skills():
                          total_exp=current_user.exp,
                          total_problems=total_problems,
                          total_exp_earned=total_exp_earned)
+
+
+@app.route('/admin')
+@login_required
+@admin_required
+def admin_panel():
+    users = User.query.order_by(User.exp.desc()).all()
+    return render_template('admin.html', users=users)
+
+
+@app.route('/admin/modify_exp', methods=['POST'])
+@login_required
+@admin_required
+def admin_modify_exp():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    amount = data.get('amount', 0)
+    action = data.get('action')
+
+    if not user_id or not action:
+        return jsonify({'error': 'Missing parameters'}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    try:
+        amount = int(amount)
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Invalid amount'}), 400
+
+    if action == 'add':
+        user.exp += amount
+    elif action == 'deduct':
+        user.exp = max(0, user.exp - amount)
+    elif action == 'set':
+        user.exp = max(0, amount)
+    else:
+        return jsonify({'error': 'Invalid action'}), 400
+
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'user_id': user.id,
+        'username': user.username,
+        'new_exp': user.exp
+    })
+
+
+@app.route('/admin/set_level', methods=['POST'])
+@login_required
+@admin_required
+def admin_set_level():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    section = data.get('section')
+    level = data.get('level')
+
+    if not user_id or not section or level is None:
+        return jsonify({'error': 'Missing parameters'}), 400
+
+    if section not in SECTION_CONFIG:
+        return jsonify({'error': 'Invalid section'}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    try:
+        level = max(1, int(level))
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Invalid level'}), 400
+
+    progress = UserSectorProgress.query.filter_by(
+        user_id=user_id,
+        section=section
+    ).first()
+
+    if not progress:
+        progress = UserSectorProgress(
+            user_id=user_id,
+            section=section,
+            level=level,
+            total_problems_solved=0,
+            total_exp_earned=0
+        )
+        db.session.add(progress)
+    else:
+        progress.level = level
+
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'user_id': user.id,
+        'section': section,
+        'new_level': level
+    })

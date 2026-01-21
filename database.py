@@ -154,6 +154,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(256), nullable=False)
     exp = db.Column(db.Integer, default=0)
     level = db.Column(db.Integer, default=1)
+    is_admin = db.Column(db.Boolean, default=False)
 
     sector_progress = db.relationship('UserSectorProgress', backref='user', lazy=True)
 
